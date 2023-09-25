@@ -10,6 +10,7 @@ def test_showSummary_should_prompt_error_message(client):
         )
     assert 'Email not found' in response.data.decode()
 
+
 def test_showSummary_should_redirect_to_app(client):
     """
     When: the given email is in database
