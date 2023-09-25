@@ -34,3 +34,24 @@ def test_purchasePlaces_should_modify_user_points(client):
     final_points = get_points_from_summary(soup)
 
     assert final_points == initial_points - purchased_points
+
+
+def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
+    """
+    when: a secratary try to book more than the club's current points
+    then: the app flashes an error message
+    """
+    purchased_points = 6
+
+    # purchase places
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            'club': 'Iron Temple',
+            'competition': 'Spring Festival',
+            'places': purchased_points
+        },
+        )
+
+    assert ('spend more points than you have.' in
+            response.data.decode())

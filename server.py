@@ -32,7 +32,7 @@ def showSummary():
     for registered_club in clubs:
         if registered_club['email'] == request.form['email']:
             club = registered_club
-    if club == None:
+    if club is None:
         flash('Email not found. Please verify email.')
         return redirect(url_for('index'))
 
@@ -69,17 +69,25 @@ def purchasePlaces():
         ][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
-    competition['numberOfPlaces'] = (int(competition['numberOfPlaces'])
-                                     - placesRequired)
-    club['points'] = (int(club['points']) - placesRequired)
 
-    flash('Great-booking complete!')
-    return render_template(
-        'welcome.html',
-        club=club,
-        competitions=competitions
-        )
-
+    if int(club['points']) - placesRequired >= 0:
+        competition['numberOfPlaces'] = (
+            int(competition['numberOfPlaces']) - placesRequired
+            )
+        club['points'] = (int(club['points']) - placesRequired)
+        flash('Great-booking complete!')
+        return render_template(
+            'welcome.html',
+            club=club,
+            competitions=competitions
+            )
+    else:
+        flash('You can\'t spend more points than you have.')
+        return render_template(
+            'booking.html',
+            club=club,
+            competition=competition
+            )
 
 # TODO: Add route for points display
 
