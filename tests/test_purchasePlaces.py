@@ -55,3 +55,23 @@ def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
 
     assert ('spend more points than you have.' in
             response.data.decode())
+
+def test_shouldnt_book_more_than_twelve_places(client):
+    """
+    when: a secratary try to book more than 12 places
+    then: the app flashes an error message
+    """
+    purchased_points = 13
+
+    # purchase places
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            'club': 'Simply Lift',
+            'competition': 'Spring Festival',
+            'places': purchased_points
+        },
+        )
+
+    assert ('more than 12 places in a competition.' in
+            response.data.decode())
