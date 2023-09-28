@@ -96,5 +96,5 @@ def test_chouldnt_be_able_to_book_for_past_competition(
         },
         )
 
-    assert ('book in a past competition.' in
+    assert ('book any place in a past competition.' in
             response.data.decode())

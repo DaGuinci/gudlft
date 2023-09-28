@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -20,6 +21,32 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
+# @app.context_processor
+# def utility_processor():
+#     def is_competition_in_the_past(compet):
+#         now = datetime.now()
+#         competition_datetime = datetime.strptime(
+#             compet.competition['date'],
+#             '%Y-%m-%d %H:%M:%S'
+#             )
+#         if competition_datetime < now:
+#             return True
+#         else:
+#             return False
+
+def is_competition_in_the_past(competition):
+    now = datetime.now()
+    competition_datetime = datetime.strptime(
+        competition['date'],
+        '%Y-%m-%d %H:%M:%S'
+        )
+    if competition_datetime < now:
+        return True
+    else:
+        return False
+
+
+app.add_template_filter(is_competition_in_the_past)
 
 @app.route('/')
 def index():
@@ -73,8 +100,21 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
 
+    # Is the competition still to be played
+    now = datetime.now()
+    competition_datetime = datetime.strptime(
+        competition['date'],
+        '%Y-%m-%d %H:%M:%S'
+        )
+    if competition_datetime < now:
+        flash('You can\'t book any place in a past competition.')
+        return render_template(
+            'welcome.html',
+            club=club,
+            competitions=competitions
+            )
     # Does club have enough points
-    if int(club['points']) - placesRequired < 0:
+    elif int(club['points']) - placesRequired < 0:
         flash('You can\'t spend more points than you have.')
         return render_template(
             'booking.html',
@@ -82,7 +122,7 @@ def purchasePlaces():
             competition=competition
             )
     # isnt booking more than 12 places
-    if placesRequired > 12:
+    elif placesRequired > 12:
         flash('You can\'t book more than 12 places in a competition.')
         return render_template(
             'booking.html',
