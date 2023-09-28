@@ -3,12 +3,13 @@ from bs4 import BeautifulSoup
 from .conftest import get_points_from_summary
 
 
-def test_purchasePlaces_should_modify_user_points(client):
+def test_purchasePlaces_should_modify_user_points(
+        client,
+        ):
     """
     When: a secretary book one ore more places
     Then: the changes are reflected
     """
-
     purchased_points = 2
 
     # access to the initial number of points
@@ -20,12 +21,12 @@ def test_purchasePlaces_should_modify_user_points(client):
     soup = BeautifulSoup(response.data, 'html.parser')
     initial_points = get_points_from_summary(soup)
 
-    # purchase places
+    # purchase places in a future competition
     response = client.post(
         "/purchasePlaces",
         data={
             'club': 'Iron Temple',
-            'competition': 'Spring Festival',
+            'competition': 'Fall Classic',
             'places': purchased_points
         },
         )
@@ -48,7 +49,7 @@ def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
         "/purchasePlaces",
         data={
             'club': 'Iron Temple',
-            'competition': 'Spring Festival',
+            'competition': 'Fall Classic',
             'places': purchased_points
         },
         )
@@ -56,14 +57,36 @@ def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
     assert ('spend more points than you have.' in
             response.data.decode())
 
-def test_shouldnt_book_more_than_twelve_places(client):
+
+def test_shouldnt_book_more_than_twelve_places(
+        client,
+        ):
     """
     when: a secratary try to book more than 12 places
     then: the app flashes an error message
     """
     purchased_points = 13
 
-    # purchase places
+    # purchase places in a future competition
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            'club': 'Simply Lift',
+            'competition': 'Fall Classic',
+            'places': purchased_points
+        },
+        )
+
+    assert ('more than 12 places in a competition.' in
+            response.data.decode())
+
+
+def test_chouldnt_be_able_to_book_for_past_competition(
+        client
+        ):
+
+    purchased_points = 4
+
     response = client.post(
         "/purchasePlaces",
         data={
@@ -73,5 +96,5 @@ def test_shouldnt_book_more_than_twelve_places(client):
         },
         )
 
-    assert ('more than 12 places in a competition.' in
+    assert ('book in a past competition.' in
             response.data.decode())

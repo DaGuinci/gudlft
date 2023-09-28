@@ -1,6 +1,6 @@
 import pytest
 from ..server import app
-
+import server
 
 """Initialize the testing environment
 
@@ -25,12 +25,26 @@ def client():
     yield client
 
 
+def setup_app(app):
+    app.competitions = mocked_competitions
+
+
+def mocked_competitions():
+    competitions = [
+        {
+            'name': 'future_competition',
+            'date': '2023-12-24 09:00:00',
+            'numberOfPlaces': 25
+        }
+    ]
+    return competitions
+
+
 def get_points_from_summary(html):
     content = html.body.text
 
     for line in content.splitlines():
         if 'Points available' in line:
-            print(line)
             # delete all but number of points
             points = line[22:]
             if points.isdigit():
