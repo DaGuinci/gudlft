@@ -1,6 +1,5 @@
 import pytest
 from ..server import app
-import server
 
 """Initialize the testing environment
 

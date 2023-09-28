@@ -21,19 +21,8 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
-# @app.context_processor
-# def utility_processor():
-#     def is_competition_in_the_past(compet):
-#         now = datetime.now()
-#         competition_datetime = datetime.strptime(
-#             compet.competition['date'],
-#             '%Y-%m-%d %H:%M:%S'
-#             )
-#         if competition_datetime < now:
-#             return True
-#         else:
-#             return False
 
+# Filter used in welcome template
 def is_competition_in_the_past(competition):
     now = datetime.now()
     competition_datetime = datetime.strptime(
@@ -47,6 +36,7 @@ def is_competition_in_the_past(competition):
 
 
 app.add_template_filter(is_competition_in_the_past)
+
 
 @app.route('/')
 def index():
