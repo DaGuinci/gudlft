@@ -84,7 +84,10 @@ def test_shouldnt_book_more_than_twelve_places(
 def test_chouldnt_be_able_to_book_for_past_competition(
         client
         ):
-
+    """
+    when: a secratary try to book places in a past competition
+    then: the app flashes an error message
+    """
     purchased_points = 4
 
     response = client.post(
