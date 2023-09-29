@@ -119,6 +119,14 @@ def purchasePlaces():
             club=club,
             competition=competition
             )
+    # are there enough places available
+    elif placesRequired > int(competition['numberOfPlaces']):
+        flash('There aren\'t enough places available in this competition.')
+        return render_template(
+            'booking.html',
+            club=club,
+            competition=competition
+            )
     else:
         competition['numberOfPlaces'] = (
             int(competition['numberOfPlaces']) - placesRequired
@@ -131,12 +139,14 @@ def purchasePlaces():
             competitions=competitions
             )
 
+
 @app.route('/board')
 def view_board():
     return render_template(
         'board.html',
         clubs=clubs,
         )
+
 
 @app.route('/logout')
 def logout():

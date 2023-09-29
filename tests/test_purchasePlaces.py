@@ -108,3 +108,37 @@ def test_chouldnt_be_able_to_book_for_past_competition(
         "You can\'t book any place in a past competition." in
         html.unescape(response.data.decode())
         )
+
+def test_chouldnt_be_able_to_book_more_places_than_available(
+        client
+        ):
+    """
+    when: a secratary tries to book more places than available in competition
+    then: the app flashes an error message
+    """
+    purchased_points = 7
+
+    # quit 7 of the 13 places available
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            'club': 'Simply Lift',
+            'competition': 'Fall Classic',
+            'places': purchased_points
+        },
+        )
+
+    # book more places than available
+    response = client.post(
+        "/purchasePlaces",
+        data={
+            'club': 'Simply Lift',
+            'competition': 'Fall Classic',
+            'places': purchased_points
+        },
+        )
+
+    assert (
+        "There aren\'t enough places available in this competition." in
+        html.unescape(response.data.decode())
+        )
