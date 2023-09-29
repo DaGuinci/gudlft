@@ -1,3 +1,4 @@
+import html
 from bs4 import BeautifulSoup
 
 from .conftest import get_points_from_summary
@@ -7,8 +8,8 @@ def test_purchasePlaces_should_modify_user_points(
         client,
         ):
     """
-    When: a secretary book one ore more places
-    Then: the changes are reflected
+    When: a secretary book one or more places
+    Then: the places are booked and the changes are reflected
     """
     purchased_points = 2
 
@@ -34,12 +35,13 @@ def test_purchasePlaces_should_modify_user_points(
     soup = BeautifulSoup(response.data, 'html.parser')
     final_points = get_points_from_summary(soup)
 
+    assert 'Great-booking complete!' in response.data.decode()
     assert final_points == initial_points - purchased_points
 
 
 def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
     """
-    when: a secratary try to book more than the club's current points
+    when: a secratary tries to book more than the club's current points
     then: the app flashes an error message
     """
     purchased_points = 6
@@ -53,16 +55,17 @@ def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
             'places': purchased_points
         },
         )
-
-    assert ('spend more points than you have.' in
-            response.data.decode())
+    assert (
+        "You can't spend more points than you have." in
+        html.unescape(response.data.decode())
+        )
 
 
 def test_shouldnt_book_more_than_twelve_places(
         client,
         ):
     """
-    when: a secratary try to book more than 12 places
+    when: a secratary tries to book more than 12 places
     then: the app flashes an error message
     """
     purchased_points = 13
@@ -77,15 +80,17 @@ def test_shouldnt_book_more_than_twelve_places(
         },
         )
 
-    assert ('more than 12 places in a competition.' in
-            response.data.decode())
+    assert (
+        "You can\'t book more than 12 places in a competition." in
+        html.unescape(response.data.decode())
+        )
 
 
 def test_chouldnt_be_able_to_book_for_past_competition(
         client
         ):
     """
-    when: a secratary try to book places in a past competition
+    when: a secratary tries to book places in a past competition
     then: the app flashes an error message
     """
     purchased_points = 4
@@ -99,5 +104,7 @@ def test_chouldnt_be_able_to_book_for_past_competition(
         },
         )
 
-    assert ('book any place in a past competition.' in
-            response.data.decode())
+    assert (
+        "You can\'t book any place in a past competition." in
+        html.unescape(response.data.decode())
+        )

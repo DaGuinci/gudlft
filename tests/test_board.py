@@ -1,7 +1,7 @@
 def test_board_should_display_clubs_points(client):
     """
-    when: a secratary try to book more than the club's current points
-    then: the app flashes an error message
+    when: any user tries to see the points statement board
+    then: the app displays the board
     """
 
     # purchase places
