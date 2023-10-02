@@ -18,7 +18,7 @@ def test_showSummary_should_redirect_to_app(client):
     """
     response = client.post(
         "/showSummary",
-        data={'email': 'admin@irontemple.com'},
+        data={'email': 'test@clubtest.com'},
         follow_redirects=True
         )
-    assert 'Welcome, admin@irontemple.com' in response.data.decode()
+    assert 'Welcome, test@clubtest.com' in response.data.decode()

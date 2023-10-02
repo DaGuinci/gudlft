@@ -1,7 +1,7 @@
 import html
 from bs4 import BeautifulSoup
 
-from .conftest import get_points_from_summary
+from tests.conftest import get_points_from_summary
 
 
 def test_purchasePlaces_should_modify_user_points(
@@ -12,22 +12,21 @@ def test_purchasePlaces_should_modify_user_points(
     Then: the places are booked and the changes are reflected
     """
     purchased_points = 2
-
-    # access to the initial number of points
     response = client.post(
         "/showSummary",
-        data={'email': 'admin@irontemple.com'},
+        data={'email': 'test@clubtest.com'},
         follow_redirects=True
         )
     soup = BeautifulSoup(response.data, 'html.parser')
+
     initial_points = get_points_from_summary(soup)
 
     # purchase places in a future competition
     response = client.post(
         "/purchasePlaces",
         data={
-            'club': 'Iron Temple',
-            'competition': 'Fall Classic',
+            'club': 'Club test',
+            'competition': 'Competition test',
             'places': purchased_points
         },
         )
@@ -50,8 +49,8 @@ def test_purchasePlaces_should_not_allow_spend_more_than_available(client):
     response = client.post(
         "/purchasePlaces",
         data={
-            'club': 'Iron Temple',
-            'competition': 'Fall Classic',
+            'club': 'Club test 2',
+            'competition': 'Competition test',
             'places': purchased_points
         },
         )
@@ -74,8 +73,8 @@ def test_shouldnt_book_more_than_twelve_places(
     response = client.post(
         "/purchasePlaces",
         data={
-            'club': 'Simply Lift',
-            'competition': 'Fall Classic',
+            'club': 'Club test',
+            'competition': 'Competition test',
             'places': purchased_points
         },
         )
@@ -98,8 +97,8 @@ def test_chouldnt_be_able_to_book_for_past_competition(
     response = client.post(
         "/purchasePlaces",
         data={
-            'club': 'Simply Lift',
-            'competition': 'Spring Festival',
+            'club': 'Club test',
+            'competition': 'Competition test 2',
             'places': purchased_points
         },
         )
@@ -109,6 +108,7 @@ def test_chouldnt_be_able_to_book_for_past_competition(
         html.unescape(response.data.decode())
         )
 
+
 def test_chouldnt_be_able_to_book_more_places_than_available(
         client
         ):
@@ -116,24 +116,13 @@ def test_chouldnt_be_able_to_book_more_places_than_available(
     when: a secratary tries to book more places than available in competition
     then: the app flashes an error message
     """
-    purchased_points = 7
+    purchased_points = 9
 
-    # quit 7 of the 13 places available
     response = client.post(
         "/purchasePlaces",
         data={
-            'club': 'Simply Lift',
-            'competition': 'Fall Classic',
-            'places': purchased_points
-        },
-        )
-
-    # book more places than available
-    response = client.post(
-        "/purchasePlaces",
-        data={
-            'club': 'Simply Lift',
-            'competition': 'Fall Classic',
+            'club': 'Club test',
+            'competition': 'Competition test',
             'places': purchased_points
         },
         )

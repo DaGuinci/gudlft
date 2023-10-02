@@ -1,5 +1,5 @@
 import pytest
-from ..server import app
+import server
 
 """Initialize the testing environment
 
@@ -18,25 +18,34 @@ def client():
     :return: App for testing
     """
 
-    app.config['TESTING'] = True
-    client = app.test_client()
-
-    yield client
+    server.app.config['TESTING'] = True
+    return server.app.test_client()
 
 
-def setup_app(app):
-    app.competitions = mocked_competitions
+@pytest.fixture(scope="function", autouse=True)
+def clubs(monkeypatch):
+    mock_clubs = [
+        {"name": "Club test", "email": "test@clubtest.com", "points": "13"},
+        {"name": "Club test 2", "email": "test@clubtest2.com", "points": "4"},
+    ]
+    monkeypatch.setattr(server, "clubs", mock_clubs)
 
 
-def mocked_competitions():
-    competitions = [
+@pytest.fixture(scope="function", autouse=True)
+def competitions(monkeypatch):
+    mock_competitions = [
         {
-            'name': 'future_competition',
-            'date': '2023-12-24 09:00:00',
-            'numberOfPlaces': 25
+            "name": "Competition test",
+            "date": "2023-10-22 13:30:00",
+            "numberOfPlaces": "8"
+        },
+        {
+            "name": "Competition test 2",
+            "date": "2021-10-22 13:30:00",
+            "numberOfPlaces": "8"
         }
     ]
-    return competitions
+    monkeypatch.setattr(server, "competitions", mock_competitions)
 
 
 def get_points_from_summary(html):
