@@ -2,7 +2,6 @@
 
 1. Why
 
-
     This is a proof of concept (POC) project to show a light-weight version of our competition booking platform. The aim is the keep things as light as possible, and use feedback from the users to iterate.
 
 2. Getting Started
@@ -52,3 +51,35 @@
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
+- Unit tests
+
+    As unit tests are using pytest, use the command
+    ```bash
+    # in project's root
+    python -m pytest
+    ```
+    to run unit tests
+
+- Performance tests
+
+    Performance tests use locust. To launch locust server:
+  - Launch app server
+  - Launch locust process:
+  ```bash
+  # in project's root
+  locust -f tests/perf_tests/locustfile.py
+  ```
+  - in a web browser, go to http://0.0.0.0:8089/
+  - fill required infos
+
+   In case of warning message about the cpu usage (using Ubuntu ?), run other instances in other terminals:
+
+   In a first one:
+   ```bash
+   locust -f tests/perf_tests/locustfile.py --master
+   ```
+
+   In others terminals (each terminal using a core, maximum number of terminals depends of number of cpu cores):
+   ```bash
+   locust -f tests/perf_tests/locustfile.py --worker
+   ```
