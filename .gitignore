@@ -5,3 +5,6 @@ lib
 .envrc
 __pycache__
 env/
+htmlcov/
+.coverage
+# geckodriver.log
