@@ -19,7 +19,7 @@ def test_purchasePlaces_should_modify_user_points(
         )
     soup = BeautifulSoup(response.data, 'html.parser')
 
-    initial_points = get_points_from_summary(soup)
+    initial_points = get_points_from_summary(soup)  # 13
 
     # purchase places in a future competition
     response = client.post(
@@ -32,8 +32,7 @@ def test_purchasePlaces_should_modify_user_points(
         )
     # access to changed points
     soup = BeautifulSoup(response.data, 'html.parser')
-    final_points = get_points_from_summary(soup)
-
+    final_points = get_points_from_summary(soup)  # 2
     assert 'Great-booking complete!' in response.data.decode()
     assert final_points == initial_points - purchased_points
 
