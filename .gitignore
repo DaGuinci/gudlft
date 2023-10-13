@@ -8,3 +8,5 @@ env/
 htmlcov/
 .coverage
 geckodriver.log
+.pytest_cache/
+.vscode/
